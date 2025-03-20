@@ -4,7 +4,7 @@ library(readr)
 library(ggplot2)
 library(Hmisc)
 
-setwd("C:/Users/paulb/Dropbox/Paul/Random/BDI/Endgame/RCode/IU_Plots") # Update
+setwd("..../IU_Plots") # Update
 plotOutputPath <- paste0("Schisto/Plots/", Sys.Date(), "/Individual")
 outpath <- if(!dir.exists(plotOutputPath)) dir.create(plotOutputPath, recursive = T)
 plotOutputPath <- paste0("Schisto/Plots/", Sys.Date())

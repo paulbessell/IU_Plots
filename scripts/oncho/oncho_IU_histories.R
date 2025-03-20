@@ -3,6 +3,7 @@ library(readxl)
 library(stringr)
 library(sf)
 library(readr)
+setwd("..../IU_Plots") # Update
 
 filter_countries <- c("Seychelles", "Mauritius", "Eswatini", "Madagascar", "Gambia",
                       "Botswana", "Namibia", "Tanzania (Zanzibar)",
@@ -10,13 +11,13 @@ filter_countries <- c("Seychelles", "Mauritius", "Eswatini", "Madagascar", "Gamb
                       "Lesotho", "Comoros", "Algeria", "Mauritania", "Egypt",
                       "Djibouti", "Somalia", "Yemen", "Zimbabwe", "Eritrea")
 
-oncho <- read_csv("Oncho_IU_MDA_202308.csv")  %>%
+oncho <- read_csv("Data/Oncho/History/Oncho_IU_MDA_202308.csv")  %>%
   mutate(pID = row_number()) # Add a unique id in case it is useful
 
-ius<- read_sf("ESPEN_IU_2021.shp")
+ius<- read_sf("Data/IUs/ESPEN_IU_2021.shp")
 ius_valid <- st_make_valid(ius)
 
-list_new_ius <- read_csv("List_New_IU.csv")
+list_new_ius <- read_csv("Data/Oncho/History/List_New_IU.csv")
 
 oncho_parent <- oncho %>%
   left_join(list_new_ius, by = c("IU_ID" = "ESPEN_IU_ID")) # Joining up Jorge's index file
@@ -37,7 +38,7 @@ newDF$Year <- yearSeq
 newDF_Join <- newDF %>% # Create the new columns in the data frame
   left_join(oncho, by = c("Year" = "Year", "Parent1_IU_ID" = "IU_ID"), suffix = c("", "_P")) %>%
   group_by(Parent1_IU_ID, Year) %>%
-  mutate(Sisters = n()) = # The number of other children from that parent
+  mutate(Sisters = n()) # The number of other children from that parent
 
 
 oncho_bind <- oncho %>% # Put the data back into the main data frame
@@ -46,7 +47,7 @@ oncho_bind <- oncho %>% # Put the data back into the main data frame
   mutate("SHP_Present" = ifelse(IU_ID %in% ius$IU_ID, "Present", "Absent")) %>% # Is the IU recorded in the spatial data
   mutate(Included_Ctry = ifelse(ADMIN0 %in% filter_countries, "Exclude", "Include")) # Is the countyr one thta we are including in the oncho list
 
-write_excel_csv(oncho_bind, file = "oncho_bind_parents.csv", na = "")
+write_excel_csv(oncho_bind, file = "Oncho/History/oncho_bind_parents.csv", na = "")
 
 
 oncho_bind_min <- oncho_bind %>% # Checking how many records go back to 2012
